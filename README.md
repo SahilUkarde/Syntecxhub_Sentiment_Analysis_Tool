@@ -1,8 +1,5 @@
 # Syntecxhub_Sentiment_Analysis_Tool
 Machine Learning-based Sentiment Analysis Tool using TF-IDF and Naive Bayes to classify text as Positive, Negative, or Neutral.
-# Sentiment Analysis Tool
-
-A Machine Learning-based Sentiment Analysis Tool that classifies text as **Positive**, **Negative**, or **Neutral** using Natural Language Processing (NLP) techniques and Scikit-learn.
 
 ## 📌 Overview
 
@@ -109,7 +106,7 @@ Enter any text and the model will predict whether the sentiment is Positive, Neg
 
 **Sahil Ukarde**
 B.E. Information Technology (2025)
-Artificial Intelligence & Data Analytics Enthusiast
+Python Developer | Web Developer | AI/ML
 
 ## 📜 License
 
