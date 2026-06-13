@@ -1,4 +1,0 @@
-Best model: Logistic Regression
-Accuracy: 0.9946
-Weighted F1: 0.9946
-Classes: ['negative', 'neutral', 'positive']
