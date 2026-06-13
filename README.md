@@ -55,20 +55,20 @@ sentiment-analysis-tool/
 1. Clone the repository:
 
 
-https://github.com/SahilUkarde/Syntecxhub_Sentiment_Analysis_Tool.git
+  https://github.com/SahilUkarde/Syntecxhub_Sentiment_Analysis_Tool.git
 
 
 2. Navigate to the project folder:
 
-```bash
-cd Syntecxhub_Sentiment_Analysis_Tool
-```
+
+  cd Syntecxhub_Sentiment_Analysis_Tool
+
 
 3. Install dependencies:
 
-```bash
-pip install -r requirements.txt
-```
+
+ pip install -r requirements.txt
+
 
 ## ▶️ Usage
 
