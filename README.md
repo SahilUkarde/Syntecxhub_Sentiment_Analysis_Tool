@@ -130,6 +130,8 @@ See `info.txt` for the latest training results, including the chosen model, accu
 ## 👤 Author
 
 Sahil Ukarde
+
+
 BE IT Graduate | Python Developer | Web Developer | AI/ML
 
 ## 📄 License
