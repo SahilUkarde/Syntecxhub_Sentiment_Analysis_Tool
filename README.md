@@ -55,7 +55,7 @@ sentiment-analysis-tool/
 1. Clone the repository:
 
 ```bash
-git clone https://github.com/your-username/Syntecxhub_Sentiment_Analysis_Tool.git
+https://github.com/SahilUkarde/Syntecxhub_Sentiment_Analysis_Tool.git
 ```
 
 2. Navigate to the project folder:
