@@ -31,19 +31,19 @@ The project was developed as part of an Artificial Intelligence Internship Progr
 ```text
 sentiment-analysis-tool/
 ├── data/
-│   ├── sentiment_data.csv
-│   └── generate_data.py
+│   ├── generate_data.py   
+│   └── sentiment_data.csv
 │
 ├── model/
-│   ├── sentiment_model.joblib
-│   ├── vectorizer.joblib
 │   ├── label_encoder.joblib
-│   └── model_info.txt
+│   ├── info.txt
+│   ├── sentiment_model.joblib
+│   └── vectorizer.joblib
 │
 ├── src/
-│   ├── train.py
 │   ├── predict.py
-│   └── preprocess.py
+│   ├── preprocess.py
+│   └── train.py
 │
 ├── README.md
 ├── requirements.txt
