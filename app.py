@@ -1,41 +1,39 @@
 """
-app_gradio.py
--------------
-Gradio web app for the Sentiment Analysis Tool (alternative to app.py/Streamlit).
+app.py
+------
+Streamlit web app for the Sentiment Analysis Tool.
 
 Run locally:
     pip install -r requirements.txt
-    python app_gradio.py
+    streamlit run app.py
 
-Deploy for free on Hugging Face Spaces:
-    1. Create a new Space (SDK: Gradio).
-    2. Upload this repo's files. Make sure this file is named `app.py`
-       in the Space (Hugging Face looks for app.py by default), or set
-       the Space's "app file" setting to app_gradio.py.
-    3. The Space will install requirements.txt and launch automatically,
-       giving you a public URL.
+Deploy for free:
+    Push this repo to GitHub, then deploy on Streamlit Community Cloud
+    (share.streamlit.io) — point it at app.py.
 """
 
 import os
 
-import gradio as gr
 import joblib
+import streamlit as st
 
 from preprocess import clean_text
 
 MODEL_DIR = os.path.dirname(os.path.abspath(__file__))
 
-model = joblib.load(os.path.join(MODEL_DIR, "sentiment_model.joblib"))
-vectorizer = joblib.load(os.path.join(MODEL_DIR, "vectorizer.joblib"))
-label_encoder = joblib.load(os.path.join(MODEL_DIR, "label_encoder.joblib"))
 
-EMOJI = {"positive": "🙂", "negative": "🙁", "neutral": "😐"}
+@st.cache_resource
+def load_artifacts():
+    model = joblib.load(os.path.join(MODEL_DIR, "sentiment_model.joblib"))
+    vectorizer = joblib.load(os.path.join(MODEL_DIR, "vectorizer.joblib"))
+    label_encoder = joblib.load(os.path.join(MODEL_DIR, "label_encoder.joblib"))
+    return model, vectorizer, label_encoder
 
 
-def predict_sentiment(text):
+def predict_sentiment(text, model, vectorizer, label_encoder):
     cleaned = clean_text(text)
     if not cleaned:
-        return "Please enter some text.", {}
+        return "neutral", {}
 
     features = vectorizer.transform([cleaned])
     pred_idx = model.predict(features)[0]
@@ -46,35 +44,78 @@ def predict_sentiment(text):
         proba = model.predict_proba(features)[0]
         probs = {cls: float(p) for cls, p in zip(label_encoder.classes_, proba)}
 
-    result = f"{label.upper()} {EMOJI.get(label, '')}"
-    return result, probs
+    return label, probs
 
 
-examples = [
-    "I absolutely love this product, it works perfectly!",
-    "This is the worst app I've ever used, totally broken.",
-    "The package arrived on time, nothing special about it.",
-]
-
-demo = gr.Interface(
-    fn=predict_sentiment,
-    inputs=gr.Textbox(
-        lines=3,
-        placeholder="e.g. The delivery was super fast and the staff were friendly!",
-        label="Your text",
-    ),
-    outputs=[
-        gr.Textbox(label="Predicted sentiment"),
-        gr.Label(label="Confidence scores", num_top_classes=3),
-    ],
-    examples=examples,
-    title="💬 Sentiment Analysis Tool",
-    description=(
-        "Enter a tweet, review, or any short piece of text and the model will "
-        "predict whether the sentiment is **positive**, **negative**, or **neutral**. "
-        "Model: TF-IDF + Logistic Regression."
-    ),
+# ---------------------------------------------------------------------------
+# Page setup
+# ---------------------------------------------------------------------------
+st.set_page_config(
+    page_title="Sentiment Analysis Tool",
+    page_icon="💬",
+    layout="centered",
 )
 
-if __name__ == "__main__":
-    demo.launch()
+st.title("💬 Sentiment Analysis Tool")
+st.write(
+    "Enter a tweet, review, or any short piece of text below and the model "
+    "will predict whether the sentiment is **positive**, **negative**, or "
+    "**neutral**."
+)
+
+model, vectorizer, label_encoder = load_artifacts()
+
+# ---------------------------------------------------------------------------
+# Input
+# ---------------------------------------------------------------------------
+text_input = st.text_area(
+    "Your text",
+    placeholder="e.g. The delivery was super fast and the staff were friendly!",
+    height=120,
+)
+
+examples = {
+    "👍 Positive example": "I absolutely love this product, it works perfectly!",
+    "👎 Negative example": "This is the worst app I've ever used, totally broken.",
+    "😐 Neutral example": "The package arrived on time, nothing special about it.",
+}
+
+st.write("Or try an example:")
+cols = st.columns(len(examples))
+for col, (label, example_text) in zip(cols, examples.items()):
+    if col.button(label):
+        text_input = example_text
+        st.session_state["text_input"] = example_text
+
+if "text_input" in st.session_state and not text_input:
+    text_input = st.session_state["text_input"]
+
+analyze = st.button("Analyze sentiment", type="primary")
+
+# ---------------------------------------------------------------------------
+# Output
+# ---------------------------------------------------------------------------
+if analyze or text_input:
+    if not text_input.strip():
+        st.warning("Please enter some text first.")
+    else:
+        label, probs = predict_sentiment(text_input, model, vectorizer, label_encoder)
+
+        emoji = {"positive": "🙂", "negative": "🙁", "neutral": "😐"}.get(label, "")
+        color = {"positive": "green", "negative": "red", "neutral": "gray"}.get(label, "gray")
+
+        st.markdown(
+            f"### Predicted sentiment: :{color}[{label.upper()} {emoji}]"
+        )
+
+        if probs:
+            st.write("**Confidence scores:**")
+            for cls, p in sorted(probs.items(), key=lambda x: -x[1]):
+                st.write(f"{cls.capitalize()}")
+                st.progress(p, text=f"{p:.1%}")
+
+st.divider()
+st.caption(
+    "Model: TF-IDF + Logistic Regression, trained on labeled tweet/review data. "
+    "See the project README for training and evaluation details."
+)
