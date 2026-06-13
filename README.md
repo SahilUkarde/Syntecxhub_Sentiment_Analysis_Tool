@@ -127,6 +127,11 @@ See `info.txt` for the latest training results, including the chosen model, accu
 3. **Modeling**: `MultinomialNB` and `LogisticRegression` are trained on an 80/20 train/test split. The model with the higher weighted F1-score is saved.
 4. **Inference**: both the CLI (`src/predict.py`) and the web app (`app.py`) reuse the exact same preprocessing and the saved vectorizer/model/label encoder to ensure consistent predictions.
 
+## 👤 Author
+
+**Sahil Ukarde**
+BE IT Graduate | Python Developer | Web Developer | AI/ML
+
 ## 📄 License
 
 This project is licensed under the terms of the [MIT License](LICENSE).
